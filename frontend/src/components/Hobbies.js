@@ -1,7 +1,7 @@
 const Hobbies = ({ hobbies, toggleDelete }) => {
     return (
       <div>
-        <h2>Hobbies</h2>
+        <h2>&lt;Hobbies&gt;</h2>
         <table>
           <tr>
             <th>No.</th>

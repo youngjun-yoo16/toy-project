@@ -154,7 +154,8 @@ const App = () => {
       {hobby ? <Hobbies hobbies={hobbies} toggleDelete={toggleDelete} /> 
              : <Users users={users} toggleDelete={toggleDelete} />}
       <br />
-      <h2>Functionalities:</h2>
+      <hr />
+      <h2>Functionalities:</h2> <br />
       <h2>1. Create User</h2>
       <form onSubmit={createNewUserName}>
         Name: &nbsp;

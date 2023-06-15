@@ -1,7 +1,7 @@
 const Users = ({ users, toggleDelete }) => {
     return (
       <div>
-        <h2>Users</h2>
+        <h2>&lt;Users&gt;</h2>
         <table>
           <tr>
             <th>ID</th>
