@@ -23,13 +23,14 @@ app.get('/', (_, response) => {
 app.get('/users', db.getUsers)
 app.get('/hobbies', db.getHobbies)
 app.get('/users/hobbies', db.getHobbiesWithUserName)
-
 app.get('/users/:id', db.getUserById)
 app.get('/hobbies/:id', db.getHobbiesById)
 app.get('/users/hobbies/:id', db.getHobbiesByUserId)
 
 app.post('/users', db.createUser)
 app.post('/hobbies', db.createHobby)
+
+app.put('/users/:id', db.updateUser)
 
 app.delete('/users/:id', db.deleteUser)
 app.delete('/hobbies/:id', db.deleteHobby)
