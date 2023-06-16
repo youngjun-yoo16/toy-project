@@ -47,62 +47,62 @@ const getHobbiesById = (request, response) => {
 }
 
 const getHobbiesWithUserName = (_request, response) => {
-    pool.query('SELECT hobbies.id, fk_user_id, name, sport, instrument FROM users INNER JOIN hobbies on hobbies.fk_user_id = users.id', 
-                (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-                 response.status(200).json(results.rows)
-    })
+    pool.query('SELECT hobbies.id, fk_user_id, name, sport, instrument FROM users INNER JOIN hobbies on hobbies.fk_user_id = users.id',
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).json(results.rows)
+        })
 }
 
 const getHobbiesByUserId = (request, response) => {
     const id = parseInt(request.params.id)
-    pool.query('SELECT hobbies.id, fk_user_id, name, sport, instrument FROM users INNER JOIN hobbies ON hobbies.fk_user_id = users.id WHERE users.id = $1', 
-                [id], 
-                (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-                response.status(200).json(results.rows)
-    })
+    pool.query('SELECT hobbies.id, fk_user_id, name, sport, instrument FROM users INNER JOIN hobbies ON hobbies.fk_user_id = users.id WHERE users.id = $1',
+        [id],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).json(results.rows)
+        })
 }
 
 const createUser = (request, response) => {
     const { name, email } = request.body
-    pool.query('INSERT INTO users (name, email) VALUES ($1, $2)', 
-                [name, email], 
-                (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-                response.status(201).send(`User added with ID: ${results.insertId}`)
-    })
+    pool.query('INSERT INTO users (name, email) VALUES ($1, $2)',
+        [name, email],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(201).send(`User added with ID: ${results.insertId}`)
+        })
 }
 
 const createHobby = (request, response) => {
     const { fk_user_id, sport, instrument } = request.body
-    pool.query('INSERT INTO hobbies (fk_user_id, sport, instrument) VALUES ($1, $2, $3)', 
-                [fk_user_id, sport, instrument], 
-                (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-                response.status(201).send(`Hobby added with ID: ${results.insertId}`)
-    })
+    pool.query('INSERT INTO hobbies (fk_user_id, sport, instrument) VALUES ($1, $2, $3)',
+        [fk_user_id, sport, instrument],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(201).send(`Hobby added with ID: ${results.insertId}`)
+        })
 }
 
 const updateUser = (request, response) => {
     const id = parseInt(request.params.id)
     const { name, email } = request.body
     pool.query(`UPDATE users SET name = $1, email = $2 WHERE id = $3`,
-                [name, email, id],
-                (error) => {
-                    if (error) {
-                        throw error
-                    }
-                    response.status(200).send(`User modified with ID: ${id}`)
-    })
+        [name, email, id],
+        (error) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).send(`User modified with ID: ${id}`)
+        })
 }
 
 const deleteUser = (request, response) => {

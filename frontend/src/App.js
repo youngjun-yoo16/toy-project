@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Users from './components/Users'
 import Hobbies from './components/Hobbies'
+import Create from './components/Create'
+import Read from './components/Read'
+import Update from './components/Update'
 const userBaseUrl = 'http://localhost:3001/users'
 const hobbyBaseUrl = 'http://localhost:3001/hobbies'
 let hobby = false
@@ -16,6 +19,9 @@ const App = () => {
   const [newInstrument, setNewInstrument] = useState('')
   const [userNo, setUserNo] = useState('')
   const [userHobbyNo, setUserHobbyNo] = useState('')
+  const [userIdForUpdate, setUserIdForUpdate] = useState('')
+  const [updatedUserName, setUpdatedUserName] = useState('')
+  const [updatedUserEmail, setUpdatedUserEmail] = useState('')
 
   useEffect(() => {
     axios
@@ -36,7 +42,7 @@ const App = () => {
           .catch(() => {
             alert(
               `${user.name}'s hobby '${hobbyToDelete.sport}' and '${hobbyToDelete.instrument}' was already deleted from the server.`
-              )
+            )
           })
       }
     } else {
@@ -47,7 +53,7 @@ const App = () => {
           .then(setUsers(users.filter(user => user.id !== id)))
           .catch(() => {
             alert(
-            `The user '${userToDelete.name}' was already deleted from the server.`
+              `The user '${userToDelete.name}' was already deleted from the server.`
             )
           })
       }
@@ -120,6 +126,21 @@ const App = () => {
       })
   }
 
+  const updateUser = (event) => {
+    event.preventDefault()
+    const newUser = {
+      name: updatedUserName,
+      email: updatedUserEmail
+    }
+    axios.put(`${userBaseUrl}/${userIdForUpdate}`, newUser)
+      .then(() => {
+        setUserIdForUpdate('')
+        setUpdatedUserName('')
+        setUpdatedUserEmail('')
+        getUsers()
+      })
+  }
+
   const handleNewUserNameChange = ({ target }) => {
     setNewUserName(target.value)
   }
@@ -148,80 +169,34 @@ const App = () => {
     setUserHobbyNo(target.value)
   }
 
+  const handleUpdatedUserNameChange = ({ target }) => {
+    setUpdatedUserName(target.value)
+  }
+
+  const handleUpdatedUserEmailChange = ({ target }) => {
+    setUpdatedUserEmail(target.value)
+  }
+
+  const handleUserIdForUpdateChange = ({ target }) => {
+    setUserIdForUpdate(target.value)
+  }
   return (
     <div>
       <h1>Toy Project</h1>
-      {hobby ? <Hobbies hobbies={hobbies} toggleDelete={toggleDelete} /> 
-             : <Users users={users} toggleDelete={toggleDelete} />}
-      <br />
-      <hr />
-      <h2>Functionalities:</h2> <br />
-      <h2>1. Create User</h2>
-      <form onSubmit={createNewUserName}>
-        Name: &nbsp;
-        <input
-          value={newUserName}
-          onChange={handleNewUserNameChange}
-          required
-        />
-        &nbsp;
-        Email: &nbsp;
-        <input
-          value={newUserEmail}
-          onChange={handleNewUserEmailChange}
-          required
-        />
-        &nbsp;
-        <button type="submit" class="enter">Enter</button>
-      </form>
-      <br />
-      <h2>2. Create Hobby</h2>
-      <form onSubmit={createNewHobby}>
-        User Id: &nbsp;
-        <input 
-          value={userId}
-          onChange={handleUserIdChange}
-          required
-        /> 
-        &nbsp; 
-        Sport: &nbsp;
-        <input 
-          value={newSport}
-          onChange={handleNewSportChange}
-          required
-        /> 
-        &nbsp; 
-        Instrument: &nbsp;
-        <input 
-          value={newInstrument}
-          onChange={handleNewInstrumentChange}
-          required
-        /> 
-        &nbsp;
-        <button type="submit" class="enter">Enter</button>
-      </form>
+      {hobby ? <Hobbies hobbies={hobbies} toggleDelete={toggleDelete} />
+        : <Users users={users} toggleDelete={toggleDelete} />}
+      <br /> <hr />
+      <Create createNewUserName={createNewUserName} newUserName={newUserName} newUserEmail={newUserEmail}
+        onUserNameChange={handleNewUserNameChange} onUserEmailChange={handleNewUserEmailChange}
+        createNewHobby={createNewHobby} userId={userId} newSport={newSport} newInstrument={newInstrument}
+        onUserIdChange={handleUserIdChange} onSportChange={handleNewSportChange} onInstrumentChange={handleNewInstrumentChange} />
       <br /> <br />
-      <h2>3. Get User by ID</h2>
-      <form onSubmit={getUser}>
-        Enter any user id from above: &nbsp;
-        <input
-          value={userNo}
-          onChange={handleUserNoChange}
-        />
-        &nbsp;
-        <button type="submit" class="enter">Enter</button>
-      </form>
+      <Read getUser={getUser} userNo={userNo} onUserNoChange={handleUserNoChange}
+        getHobby={getHobby} userHobbyNO={userHobbyNo} onUserHobbyNoChange={handleUserHobbyNoChange} />
       <br /> <br />
-      <h2>4. Get User's hobbies by User ID</h2>
-      <form onSubmit={getHobby}>
-        Enter any user id from above: &nbsp;
-        <input
-          value={userHobbyNo}
-          onChange={handleUserHobbyNoChange}
-        />
-        &nbsp;
-        <button type="submit" class="enter">Enter</button>
-      </form>
+      <Update updateUser={updateUser} userIdForUpdate={userIdForUpdate} onUserIdForUpdateChange={handleUserIdForUpdateChange}
+        updatedUserName={updatedUserName} onUpdatedUserNameChange={handleUpdatedUserNameChange}
+        updatedUserEmail={updatedUserEmail} onUpdatedUserEmailChange={handleUpdatedUserEmailChange} />
       <br /> <br />
     </div>
   )
