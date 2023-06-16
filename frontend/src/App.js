@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Users from './components/Users'
 import Hobbies from './components/Hobbies'
 import Create from './components/Create'
 import Read from './components/Read'
 import Update from './components/Update'
-const userBaseUrl = 'http://localhost:3001/users'
-const hobbyBaseUrl = 'http://localhost:3001/hobbies'
+import userService from './services/users'
+import hobbyService from './services/hobbies'
 let hobby = false
 
 const App = () => {
@@ -24,10 +23,10 @@ const App = () => {
   const [updatedUserEmail, setUpdatedUserEmail] = useState('')
 
   useEffect(() => {
-    axios
-      .get(userBaseUrl)
-      .then(response => {
-        setUsers(response.data)
+    userService
+      .getAll()
+      .then(initialEntries => {
+        setUsers(initialEntries)
       })
   }, [])
 
@@ -36,8 +35,8 @@ const App = () => {
       const hobbyToDelete = hobbies.find(hobby => hobby.id === id)
       const user = users.find(user => user.id === hobbyToDelete.fk_user_id)
       if (window.confirm(`Delete ${user.name}'s hobby (${hobbyToDelete.sport} and ${hobbyToDelete.instrument})?`)) {
-        axios
-          .delete(`${hobbyBaseUrl}/${id}`)
+        hobbyService
+          .remove(id)
           .then(setHobbies(hobbies.filter(hobby => hobby.id !== id)))
           .catch(() => {
             alert(
@@ -48,8 +47,8 @@ const App = () => {
     } else {
       const userToDelete = users.find(user => user.id === id)
       if (window.confirm(`Delete ${userToDelete.name}?`)) {
-        axios
-          .delete(`${userBaseUrl}/${id}`)
+        userService
+          .remove(id)
           .then(setUsers(users.filter(user => user.id !== id)))
           .catch(() => {
             alert(
@@ -62,26 +61,29 @@ const App = () => {
 
   const getUsers = () => {
     hobby = false
-    axios.get(`${userBaseUrl}`)
-      .then(response => {
-        setUsers(response.data)
+    userService
+      .getAll()
+      .then(initialEntries => {
+        setUsers(initialEntries)
       })
   }
 
   const getHobbies = () => {
     hobby = true
-    axios.get(`${userBaseUrl}/hobbies`)
-      .then(response => {
-        setHobbies(response.data)
+    hobbyService
+      .getAll()
+      .then(initialEntries => {
+        setHobbies(initialEntries)
       })
   }
 
   const getUser = (event) => {
     event.preventDefault()
     hobby = false
-    axios.get(`${userBaseUrl}/${userNo}`)
-      .then(response => {
-        setUsers(response.data)
+    userService
+      .getOne(userNo)
+      .then(entries => {
+        setUsers(entries)
         setUserNo('')
       })
   }
@@ -89,9 +91,10 @@ const App = () => {
   const getHobby = (event) => {
     event.preventDefault()
     hobby = true
-    axios.get(`${userBaseUrl}/hobbies/${userHobbyNo}`)
-      .then(response => {
-        setHobbies(response.data)
+    hobbyService
+      .getOneByUserId(userHobbyNo)
+      .then(entries => {
+        setHobbies(entries)
         setUserHobbyNo('')
       })
   }
@@ -102,7 +105,8 @@ const App = () => {
       name: newUserName,
       email: newUserEmail
     }
-    axios.post(userBaseUrl, newUserObject)
+    userService
+      .create(newUserObject)
       .then(() => {
         setNewUserName('')
         setNewUserEmail('')
@@ -117,7 +121,7 @@ const App = () => {
       sport: newSport,
       instrument: newInstrument
     }
-    axios.post(hobbyBaseUrl, newHobbyObject)
+    hobbyService.create(newHobbyObject)
       .then(() => {
         setUserId('')
         setNewSport('')
@@ -132,7 +136,8 @@ const App = () => {
       name: updatedUserName,
       email: updatedUserEmail
     }
-    axios.put(`${userBaseUrl}/${userIdForUpdate}`, newUser)
+    userService
+      .update(userIdForUpdate, newUser)
       .then(() => {
         setUserIdForUpdate('')
         setUpdatedUserName('')
@@ -180,6 +185,7 @@ const App = () => {
   const handleUserIdForUpdateChange = ({ target }) => {
     setUserIdForUpdate(target.value)
   }
+
   return (
     <div>
       <h1>Toy Project</h1>
@@ -192,7 +198,7 @@ const App = () => {
         onUserIdChange={handleUserIdChange} onSportChange={handleNewSportChange} onInstrumentChange={handleNewInstrumentChange} />
       <br /> <br />
       <Read getUser={getUser} userNo={userNo} onUserNoChange={handleUserNoChange}
-        getHobby={getHobby} userHobbyNO={userHobbyNo} onUserHobbyNoChange={handleUserHobbyNoChange} />
+        getHobby={getHobby} userHobbyNo={userHobbyNo} onUserHobbyNoChange={handleUserHobbyNoChange} />
       <br /> <br />
       <Update updateUser={updateUser} userIdForUpdate={userIdForUpdate} onUserIdForUpdateChange={handleUserIdForUpdateChange}
         updatedUserName={updatedUserName} onUpdatedUserNameChange={handleUpdatedUserNameChange}

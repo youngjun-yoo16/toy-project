@@ -4,7 +4,7 @@ const Read = ({
     onUserNoChange,
     getHobby,
     userHobbyNo,
-    onUserHobbyNoChange,
+    onUserHobbyNoChange
 }) => {
     return (
         <div>
