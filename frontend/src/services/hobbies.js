@@ -19,7 +19,7 @@ const getOneByUserId = async id => {
 
 const create = async newObject => {
     const response = await axios.post(hobbyBaseUrl, newObject)
-    return response.data    
+    return response.data
 }
 
 const remove = id => {
